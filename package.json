@@ -1,0 +1,12 @@
+{
+  "name": "Classfetcher",
+  "version": "1.0.0",
+  "description": "Discord bot which fetches course information by scraping the UMBC class catalog.",
+  "main": "bot.js",
+  "author": "Nikola Bura",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "winston": "^3.2.1"
+  }
+}
