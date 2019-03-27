@@ -84,13 +84,12 @@ class DiningMenuManager {
 		
 		var targetPeriod = args[0].toLowerCase();
 		
-		if (actualDateString == null) {
-			var chatMessage = "Your specified date is not valid. The valid date identifiers are:\n";
-			for (var i in validDateStrings) {
-				chatMessage += validDateStrings[i];
-				if (i < validDateStrings.length - 1) chatMessage += ", ";
+		if (!validMealPeriods.includes(targetPeriod)) {
+			var chatMessage = "Your specified meal period is not valid. The valid meal periods are:\n";
+			for (var i in validMealPeriods) {
+				chatMessage += validMealPeriods[i];
+				if (i < validMealPeriods.length - 1) chatMessage += ", ";
 			}
-			chatMessage += "\nAdditionally, you may specify a date in any format compatible with the Javascript/NodeJS `Date.parse()` function.";
 			discordBot.sendMessage({
 				to: channelID,
 				message: chatMessage
@@ -98,12 +97,13 @@ class DiningMenuManager {
 			return;
 		}
 		
-		if (!validMealPeriods.includes(targetPeriod)) {
-			var chatMessage = "Your specified meal period is not valid. The valid meal periods are:\n";
-			for (var i in validMealPeriods) {
-				chatMessage += validMealPeriods[i];
-				if (i < validMealPeriods.length - 1) chatMessage += ", ";
+		if (actualDateString == null) {
+			var chatMessage = "Your specified date is not valid. The valid date identifiers are:\n";
+			for (var i in validDateStrings) {
+				chatMessage += validDateStrings[i];
+				if (i < validDateStrings.length - 1) chatMessage += ", ";
 			}
+			chatMessage += "\nAdditionally, you may specify a date in any format compatible with the Javascript/NodeJS `Date.parse()` function.";
 			discordBot.sendMessage({
 				to: channelID,
 				message: chatMessage
