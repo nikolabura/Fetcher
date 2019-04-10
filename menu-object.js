@@ -10,7 +10,7 @@ class DiningMenu {
 		this.menuJson = {};
 	}
 	
-	fetchMenuFromInternet (callback) {
+	fetchMenuFromInternet (discordBot, channelID, callback) {
 		console.log("\nRequesting menu JSON...");
 		const completeUrl = "https://api.dineoncampus.com/v1/location/menu?site_id=5751fd3690975b60e04893e2&platform=0&location_id=5873e39e3191a200fa4e8399&date=" + this.menuDate;
 		var req = https.request(completeUrl, (res) => {
@@ -25,6 +25,12 @@ class DiningMenu {
 			res.on('end', () => {
 				if (res.statusCode != 200) {
 					console.log("RECIEVED BAD HTTP STATUS CODE, CANCELLING THIS DETAILS PAGE SEQUENCE.");
+					var chatMessage = "Recieved bad HTTP status code from Dine On Campus API. Status code was ";
+					chatMessage += res.statusCode + ".\nRequest URL was `" + completeUrl + "`";
+					discordBot.sendMessage({
+						to: channelID,
+						message: chatMessage
+					});
 					return;
 				}
 				console.log("No more data in details.");

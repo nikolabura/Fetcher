@@ -28,7 +28,7 @@ class DiningMenuManager {
 				message: "Please wait, fetching and caching menu from Dine On Campus API. Future requests for this date will be faster."
 			});
 			var menu = new DiningMenu(menuDate);
-			menu.fetchMenuFromInternet( () => {
+			menu.fetchMenuFromInternet(discordBot, channelID, () => {
 				this.menus.push(menu);
 				try {
 					menu.printResults(mealPeriod, discordBot, channelID);
