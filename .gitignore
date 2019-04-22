@@ -1,2 +1,3 @@
 # Classfetcher gitignore file
 auth*
+logs/
