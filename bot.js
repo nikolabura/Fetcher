@@ -46,6 +46,10 @@ bot.on("ready", function (evt) {
 
 function respondClassCmd (bot, args, channelID) {
 	console.log("\nGot !class command with " + args.length + " arguments.");
+	bot.sendMessage({
+		to: channelID,
+		message: "Warning: The class search function is experiencing difficulties and may not work at this time."
+	});
 	if (args.length === 0) {
 		var msg = "**!class**";
 		msg += "\nLooks up information about a class using its ID. Courses are looked up in the UMBC catalog.";
