@@ -42,7 +42,6 @@ bot.on("ready", function (evt) {
 	logger.info("Connected");
 	logger.info("Logged in as: ");
 	logger.info(bot.username + " - (" + bot.id + ")");
-	//respondMenuCmd(bot, "", "");
 });
 
 function respondClassCmd (bot, args, channelID) {
@@ -115,12 +114,9 @@ function respondClassCmd (bot, args, channelID) {
 				var msg = "No classes found. "
 				if (Math.random() > 0.25) {
 					msg += "Please re-check your search parameters.";
-				} else if (Math.random() > 0.03) {
+				} else {
 					msg += "Please re-check your search parameters, 4head.";
 					console.log("Deploying intermediate insult.");
-				} else {
-					msg += "Please re-check your search parameters, you silly, clumsy human.";
-					console.log("Deploying devastating insult.");
 				}
 				msg += "\nThis command has the syntax `!class [CLASS ID]`";
 				msg += "\nExample: `!class cmsc202`";
