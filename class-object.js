@@ -5,7 +5,7 @@
 
 // it's a class class
 
-const http = require("http");
+const https = require("https");
 const cheerio = require("cheerio");
 
 class CourseDetails {
@@ -21,7 +21,7 @@ class CourseDetails {
 	getDetailedCourseData() {
 		console.log("\nRequesting details page...");
 		this.httpResponse = "";
-		var req = http.request(this.detailsUrl, (res) => {
+		var req = https.request(this.detailsUrl, (res) => {
 			console.log("Recieved details!");
 			console.log(`STATUS: ${res.statusCode}`);
 			console.log(`HEADERS: ${JSON.stringify(res.headers)}`);

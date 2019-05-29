@@ -8,14 +8,15 @@ var logger = require("winston");
 var auth = require("./auth.json");
 
 var http = require("http");
+var https = require("https");
 
 const CourseDetails = require("./class-object.js");
 const DiningMenu = require("./menu-object.js");
 const DiningMenuManager = require("./menu-manager-object.js");
 
 // CLASSFETCHER CONSTANTS BELOW
-var CATALOG_URL_BASE = "http://catalog.umbc.edu/"
-var SEARCH_URL 	     = "http://catalog.umbc.edu/search_advanced.php?cur_cat_oid=18&search_database=Search&search_db=Search&cpage=1&ecpage=1&ppage=1&spage=1&tpage=1&location=33&filter[keyword]="
+var CATALOG_URL_BASE = "https://catalog.umbc.edu/"
+var SEARCH_URL 	     = "https://catalog.umbc.edu/search_advanced.php?cur_cat_oid=18&search_database=Search&search_db=Search&cpage=1&ecpage=1&ppage=1&spage=1&tpage=1&location=33&filter[keyword]="
 	// suffix the filter keyword to the end of this URL
 	// no other suffixes required
 // END CONSTANTS
@@ -46,10 +47,10 @@ bot.on("ready", function (evt) {
 
 function respondClassCmd (bot, args, channelID) {
 	console.log("\nGot !class command with " + args.length + " arguments.");
-	bot.sendMessage({
+	/*bot.sendMessage({
 		to: channelID,
 		message: "Warning: The class search function is experiencing difficulties and may not work at this time."
-	});
+	});*/
 	if (args.length === 0) {
 		var msg = "**!class**";
 		msg += "\nLooks up information about a class using its ID. Courses are looked up in the UMBC catalog.";
@@ -75,7 +76,7 @@ function respondClassCmd (bot, args, channelID) {
 	}
 	console.log("\nRequesting search results...");
 	console.log(reqUrl);
-	var req = http.request(reqUrl, (res) => {
+	var req = https.request(reqUrl, (res) => {
 		console.log("Recieved search results!");
 		console.log(`STATUS: ${res.statusCode}`);
 		console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
