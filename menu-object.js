@@ -128,7 +128,7 @@ class DiningMenu {
 				chatMessage += " " + items[j].name;
 				var nutrients = items[j].nutrients;
 				
-				if (categories[i].name == "SWEET TREATS") {
+				if (categories[i].name == "SWEET TREATS" || categories[i].name == "SWEET TREAT'S") {
 					for (var nut in nutrients) {
 						if (nutrients[nut].name == "Sugar (g)") {
 							if (nutrients[nut].value == "-") { break; }
