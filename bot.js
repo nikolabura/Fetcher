@@ -11,8 +11,13 @@ var http = require("http");
 var https = require("https");
 
 const CourseDetails = require("./class-object.js");
+
 const DiningMenu = require("./menu-object.js");
 const DiningMenuManager = require("./menu-manager-object.js");
+
+const DuelManager = require("./duel-manager.js");
+
+const MessageMover = require("./message-mover.js");
 
 // CLASSFETCHER CONSTANTS BELOW
 var CATALOG_URL_BASE = "https://catalog.umbc.edu/"
@@ -36,6 +41,7 @@ var bot = new Discord.Client({
 
 // Initialize global variables
 var diningMenuManagerInstance = new DiningMenuManager();
+var duelManagerInstance = new DuelManager();
 
 logger.info("Starting...");
 
@@ -139,6 +145,37 @@ function respondMenuCmd (bot, args, channelID) {
 	diningMenuManagerInstance.handleUserCommand(args, bot, channelID);
 }
 
+function respondMovemessageCmd(bot, args, channelID, userID) {
+	if (userID != "346053055470370818") {
+		bot.sendMessage({
+			to: channelID,
+			message: "Command reserved for admins, please contact @nikola-B"
+		});
+		return;
+	} else {
+		MessageMover.handleUserCommand(args, bot, channelID);
+	}
+}
+
+function respondHamburgerCmd(bot, args, channelID, userIDarg) {
+	var userObj = {
+		userID: userIDarg
+	};
+	bot.getUser(userObj, (ignoreVar, userVar) => {
+		var message = `The great ${userVar.username} has been hamburgered!`;
+		if (userVar.username == "Serebit") {
+			message += "\n**UMBC and Fetcherbot, Inc. do not accept any liability for potential food allergies.**";
+		}
+		bot.sendMessage({
+			to: channelID,
+			message: message,
+			embed: {
+				"image": { "url": "https://cdn.discordapp.com/attachments/539992133126455326/619749261009092609/borger_borger_2.png" }
+			}
+		});
+	});
+}
+
 function respondTtsCmd (bot, args, channelID) {
 	var possibleMessages = [
 		"Here comes another Chinese earthquake. Ebrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbr",
@@ -162,6 +199,13 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 		
 		args = args.splice(1);
 		args = args.filter(arg => arg != "");
+		console.log("User: " + user + ";" + userID);
+		console.log(args);
+		console.log("Said message: " + message + ";    Meaning: " + cmd);
+		// :dead: command
+		if (cmd.startsWith("<:dead:")) {
+			cmd = ":dead:";
+		}
 		switch(cmd) {
 			// !ping
 			case "ping":
@@ -178,7 +222,14 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 					+ " Ask @nikolab for further info.\nCommands:\n!ping\n!help\n!class [CLASS]\n!dhall [PERIOD] [DATE (optional)]"
 				});
 				break;
-            // !class
+			// !echo
+			case "echo":
+				bot.sendMessage({
+					to: args[0],
+					message: args.slice(1).join(" ")
+				});
+				break;
+			// !class
 			case "class":
 				respondClassCmd(bot, args, channelID);
 				break;
@@ -186,9 +237,42 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 			case "dhall":
 				respondMenuCmd(bot, args, channelID);
 				break;
+			// !movemessage
+			case "movemessage":
+				respondMovemessageCmd(bot, args, channelID, userID);
+				break;
+			// !hamburger
+			case "hamburger":
+				respondHamburgerCmd(bot, args, channelID, userID);
+				break;
 			// !tts
 			case "tts":
 				respondTtsCmd(bot, args, channelID);
+				break;
+			// !:dead:
+			case ":dead:":
+				duelManagerInstance.handleStartingCommand(
+					args, userID, bot, channelID);
+				break;
+			// !acceptduel
+			case "acceptduel":
+				duelManagerInstance.handleAcceptDuelCommand(
+					args, userID, bot, channelID);
+				break;
+			// !draw
+			case "draw":
+				duelManagerInstance.handleDrawCommand(
+					args, userID, bot, channelID);
+				break;
+			// !testcommand
+			case "testcommand":
+				var serverID = bot.channels[channelID].guild_id;
+				//console.log(bot.servers[serverID].roles);
+				/*bot.removeFromRole({
+					userID: userID,
+					serverID: serverID,
+					roleID: '679914346700472412'
+				});*/
 				break;
 		}
 	}
