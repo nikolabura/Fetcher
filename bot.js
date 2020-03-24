@@ -7,8 +7,9 @@ var Discord = require("discord.io");
 var logger = require("winston");
 var auth = require("./auth.json");
 
-var http = require("http");
-var https = require("https");
+const http = require("http");
+const https = require("https");
+const redis = require("redis");
 
 const CourseDetails = require("./class-object.js");
 
@@ -16,6 +17,7 @@ const DiningMenu = require("./menu-object.js");
 const DiningMenuManager = require("./menu-manager-object.js");
 
 const DuelManager = require("./duel-manager.js");
+const VirusManager = require("./virus-manager.js");
 
 const MessageMover = require("./message-mover.js");
 
@@ -39,9 +41,16 @@ var bot = new Discord.Client({
 	autorun: true
 });
 
+// Initialize redis client
+const redisClient = redis.createClient();
+redisClient.on("error", function(error) {
+      console.error(error);
+});
+
 // Initialize global variables
 var diningMenuManagerInstance = new DiningMenuManager();
 var duelManagerInstance = new DuelManager();
+var virusManagerInstance = new VirusManager(bot, redisClient);
 
 logger.info("Starting...");
 
@@ -274,7 +283,10 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 					roleID: '679914346700472412'
 				});*/
 				break;
-		}
-	}
+        }
+	} else {
+        // message is NOT a bot command
+        virusManagerInstance.getChatMessage(user, userID, channelID, message, evt);
+    }
 });
 

@@ -5,7 +5,8 @@ COUNTER=1
 RESTARTSECS=60
 
 CURDATE=$(date -I)
-LOGFILE="logs/log-$CURDATE.txt"
+#LOGFILE="logs/log-$CURDATE.txt"
+LOGFILE="/dev/null"
 echo "Current date is: $CURDATE"
 echo "Logging to: $LOGFILE"
 
