@@ -26,6 +26,10 @@ var CATALOG_URL_BASE = "https://catalog.umbc.edu/"
 var SEARCH_URL 	     = "https://catalog.umbc.edu/search_advanced.php?cur_cat_oid=18&search_database=Search&search_db=Search&cpage=1&ecpage=1&ppage=1&spage=1&tpage=1&location=33&filter[keyword]="
 	// suffix the filter keyword to the end of this URL
 	// no other suffixes required
+// OTHER CONSTANTS
+var adminUserIDs = [
+    "346053055470370818",
+];
 // END CONSTANTS
 
 // Configure logger settings
@@ -233,10 +237,9 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 				break;
 			// !echo
 			case "echo":
-				bot.sendMessage({
-					to: args[0],
-					message: args.slice(1).join(" ")
-				});
+                if (adminUserIDs.includes(userID)) {
+                    bot.sendMessage({ to: args[0], message: args.slice(1).join(" ") });
+                }
 				break;
 			// !class
 			case "class":
@@ -260,8 +263,9 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 				break;
 			// !:dead:
 			case ":dead:":
-				duelManagerInstance.handleStartingCommand(
-					args, userID, bot, channelID);
+                   // TODO UNCOMMENT
+				//duelManagerInstance.handleStartingCommand(
+					//args, userID, bot, channelID);
 				break;
 			// !acceptduel
 			case "acceptduel":
@@ -283,10 +287,17 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 					roleID: '679914346700472412'
 				});*/
 				break;
+            // !infect
+            case "infect":
+                if (adminUserIDs.includes(userID)) {
+                    virusManagerInstance.startInfection(args[0]);
+                }
+                break;
         }
 	} else {
         // message is NOT a bot command
-        virusManagerInstance.getChatMessage(user, userID, channelID, message, evt);
+        // TODO UNCOMMENT
+        //virusManagerInstance.getChatMessage(user, userID, channelID, message, evt);
     }
 });
 
