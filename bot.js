@@ -11,7 +11,7 @@ const http = require("http");
 const https = require("https");
 const redis = require("redis");
 
-const CourseDetails = require("./class-object.js");
+const CourseData = require("./class-improved.js");
 
 const DiningMenu = require("./menu-object.js");
 const DiningMenuManager = require("./menu-manager-object.js");
@@ -64,14 +64,10 @@ bot.on("ready", function (evt) {
 	logger.info(bot.username + " - (" + bot.id + ")");
 });
 
-function respondClassCmd (bot, args, channelID) {
+function respondClassCmd (bot, args, channelID, detailType) {
 	console.log("\nGot !class command with " + args.length + " arguments.");
-	/*bot.sendMessage({
-		to: channelID,
-		message: "Warning: The class search function is experiencing difficulties and may not work at this time."
-	});*/
 	if (args.length === 0) {
-		var msg = "**!class**";
+		let msg = "**!class**";
 		msg += "\nLooks up information about a class using its ID. Courses are looked up in the UMBC catalog.";
 		msg += "\nThis command has the syntax `!class [CLASS ID]`";
 		msg += "\nExamples: ```\n!class cmsc202\n!class ges110```";
@@ -82,76 +78,24 @@ function respondClassCmd (bot, args, channelID) {
 		});
 		return;
 	}
-	if (args.length === 2 && /^[A-Za-z]+$/.test(args[0]) && /^\d+$/.test(args[1])) {
-		console.log("Regex test found class ID argument separated in half by a space.");
-		console.log("Condensing both into one argument.");
+    let regexResult = args.join(" ").match(/([a-zA-Z]+)\s*(\d+[a-zA-Z]{0,9})\s*(.*)/);
+    let deptName, classCode, extraArg;
+    if (regexResult != null) {
+        deptName = regexResult[1];
+        classCode = regexResult[2];
+        extraArg = regexResult[3];
+    }
+    if (regexResult == null || deptName == undefined || classCode == undefined) {
+		let msg = "**Error!**";
+		msg += "\nImproper argument to !class command. Syntax is `!class [CLASS ID]`.";
+		msg += "\nExamples: ```\n!class cmsc202\n!class ges 110```";
 		bot.sendMessage({
 			to: channelID,
-			message: "Caution: This command accepts a single-word argument. Your argument has been condensed into \"" + args[0] + args[1] + "\". Searching now..."
+			message: msg
 		});
-		var reqUrl = SEARCH_URL + args[0] + args[1];
-	} else {
-		var reqUrl = SEARCH_URL + args[0];
-	}
-	console.log("\nRequesting search results...");
-	console.log(reqUrl);
-	var req = https.request(reqUrl, (res) => {
-		console.log("Recieved search results!");
-		console.log(`STATUS: ${res.statusCode}`);
-		console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-		res.setEncoding('utf8');
-		res.validDataCounter = 0;
-		res.on('data', (chunk) => {
-			console.log("Got data");
-			// Does this chunk have the course match?
-			const CATALOG_MATCH_INDICATOR = "preview_course_nopop";
-			const BAD_RESULTS_RED_FLAG = "coid=\""; // this indicates a blank COID, meaning empty search results!
-			if (chunk.indexOf(CATALOG_MATCH_INDICATOR) !== -1) {
-				console.log("Got chunk containing '" + CATALOG_MATCH_INDICATOR + "'");
-				if (chunk.indexOf(BAD_RESULTS_RED_FLAG) !== -1) {
-					console.log("This chunk also contains '" + BAD_RESULTS_RED_FLAG + "'");
-					console.log("These search results are empty and therefore invalid.");
-					return;
-				}
-				res.validDataCounter += 1;
-				chunkLines = chunk.split("\n");
-				for (var i in chunkLines) {
-					var line = chunkLines[i];
-					var matchIndicatorIndex = line.indexOf(CATALOG_MATCH_INDICATOR);
-					if (matchIndicatorIndex !== -1) {
-						console.log("Processing line...");
-						line = line.substring(matchIndicatorIndex); // chop off beginning
-						line = line.substring(0, line.indexOf('"')); // get line until double quote
-						// now line is something like = preview_course_nopop.php?catoid=18&coid=53775
-						console.log(line);
-						var courseObj = new CourseDetails(args[0], CATALOG_URL_BASE + line, bot, channelID);
-						courseObj.getDetailedCourseData();
-					}
-				}
-				//console.log(`BODY: ${chunk}`);
-			}
-		});
-		res.on('end', () => {
-			console.log("No more data in response.");
-			if (res.validDataCounter == 0) {
-				console.log("No chunks contained a match. Assuming failed search.");
-				var msg = "No classes found. "
-				if (Math.random() > 0.25) {
-					msg += "Please re-check your search parameters.";
-				} else {
-					msg += "Please re-check your search parameters, 4head.";
-					console.log("Deploying intermediate insult.");
-				}
-				msg += "\nThis command has the syntax `!class [CLASS ID]`";
-				msg += "\nExample: `!class cmsc202`";
-				bot.sendMessage({
-					to: channelID,
-					message: msg
-				});
-			}
-		});
-	});
-	req.end();
+		return;
+    }
+    CourseData.getCourseData(deptName, classCode, bot, channelID, detailType, extraArg);
 }
 
 function respondMenuCmd (bot, args, channelID) {
@@ -243,7 +187,26 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 				break;
 			// !class
 			case "class":
-				respondClassCmd(bot, args, channelID);
+				respondClassCmd(bot, args, channelID, "normal");
+				break;
+			case "classl":
+			case "classlo":
+			case "classlon":
+			case "classlong":
+			case "classd":
+			case "classde":
+			case "classdet":
+			case "classdeta":
+			case "classdetai":
+			case "classdetail":
+			case "classdetails":
+				respondClassCmd(bot, args, channelID, "details");
+				break;
+			case "sect":
+			case "sects":
+			case "section":
+			case "sections":
+				respondClassCmd(bot, args, channelID, "sections");
 				break;
 			// !dhall
 			case "dhall":
