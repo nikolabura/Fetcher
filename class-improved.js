@@ -13,9 +13,8 @@ const { table } = require("table");
 exports.getCourseData = (deptName, classCode, discordBot, channelID, detailType, extraArgs) => {
     deptName = deptName.toUpperCase();
     classCode = classCode.toUpperCase();
-    const DEPT_COURSES_URL =
-        "https://highpoint-prd.ps.umbc.edu/app/catalog/listCoursesBySubject/UMBC1/"
-        + deptName[0] + "/" + deptName + "/UGRD";
+    const DEPT_COURSES_URL = `https://highpoint-prd.ps.umbc.edu/app/catalog/listCoursesBySubject/UMBC1/${deptName[0]}/${deptName}/UGRD`;
+    
     console.log(DEPT_COURSES_URL);
     var req = https.request(DEPT_COURSES_URL, (res) => {
         console.log("Recieved dept courses results!");
