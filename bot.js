@@ -6,6 +6,7 @@
 const Discord = require("discord.io");
 const logger = require("winston");
 const redis = require("redis");
+const fs = require("fs");
 
 // Might be better to use .env here
 const auth = require("./auth.json");
@@ -20,6 +21,8 @@ const VirusManager = require("./virus-manager.js");
 
 const MessageMover = require("./message-mover.js");
 
+const ScheduledMessageManager = require("./scheduled-msg.js");
+
 // CLASSFETCHER CONSTANTS BELOW
 const CATALOG_URL_BASE = "https://catalog.umbc.edu/"
 const SEARCH_URL 	   = "https://catalog.umbc.edu/search_advanced.php?cur_cat_oid=18&search_database=Search&search_db=Search&cpage=1&ecpage=1&ppage=1&spage=1&tpage=1&location=33&filter[keyword]="
@@ -32,6 +35,9 @@ const SEARCH_URL 	   = "https://catalog.umbc.edu/search_advanced.php?cur_cat_oid
 */
 const adminUserIDs = [
     "346053055470370818",
+    "194974011631861760",
+    "266608090487586837",
+    "323482948147871746"
 ];
 // END CONSTANTS
 
@@ -56,6 +62,7 @@ redisClient.on("error", console.error);
 const diningMenuManagerInstance = new DiningMenuManager();
 const duelManagerInstance = new DuelManager();
 const virusManagerInstance = new VirusManager(bot, redisClient);
+const scheduledMessageManagerInstance = new ScheduledMessageManager(bot, "487095520473382922", true);
 
 logger.info("Starting...");
 
@@ -63,6 +70,9 @@ bot.on("ready", () => {
 	logger.info("Connected");
 	logger.info("Logged in as: ");
 	logger.info(bot.username + " - (" + bot.id + ")");
+
+	// Load scheduled messages
+	scheduledMessageManagerInstance.populateSchedule();
 });
 
 function respondClassCmd (bot, args, channelID, detailType) {
@@ -158,6 +168,10 @@ function respondTtsCmd (bot, args, channelID) {
 		message: chosenMessage,
 		tts: true
 	});
+}
+
+function respondScheduleMsg (bot, args, channelID, userID) {
+	scheduledMessageManagerInstance.handleUserCommand(bot, args, channelID, userID);
 }
 
 bot.on("message", function (user, userID, channelID, message, evt) {
@@ -262,6 +276,19 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 				duelManagerInstance.handleDrawCommand(
 					args, userID, bot, channelID);
 				break;
+
+			// !schedule
+			case "schedule":
+				if (adminUserIDs.includes(userID)) {
+					respondScheduleMsg(bot, args, channelID, userID);
+				} else {
+					bot.sendMessage({
+						to: channelID,
+						message: "You must have Administrator permissions to execute that command"
+					});
+				}
+				break;
+
 			// !testcommand
 			case "testcommand":
 				// var serverID = bot.channels[channelID].guild_id;
