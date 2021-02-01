@@ -1,0 +1,7 @@
+0 12 * * 1 | Group A COVID test reminder for residents in **West Hill, Terrace, and Walker Avenue Apartments**. Please return your tests ASAP <@&805351475151765534>! _This is also a reminder to submit the Daily Symptom Monitoring Form!_
+0 12 * * 2 | Group A COVID test reminder for residents in **Harbor, Erickson and Patapsco Hall**. Please return your tests ASAP <@&805351475151765534>! _This is also a reminder to submit the Daily Symptom Monitoring Form!_
+0 12 * * 3 | This is a reminder to submit the Daily Symptom Monitoring Form!
+0 12 * * 4 | Group A COVID test reminder for residents in **West Hill, Terrace, and Walker Avenue Apartments**. Please return your tests ASAP <@&805351475151765534>! _This is also a reminder to submit the Daily Symptom Monitoring Form!_
+0 12 * * 5 | Group A COVID test reminder for residents in **Harbor, Erickson and Patapsco Hall**. Please return your tests ASAP <@&805351475151765534>! _This is also a reminder to submit the Daily Symptom Monitoring Form!_
+0 12 * * 6 | This is a reminder to submit the Daily Symptom Monitoring Form!
+0 12 * * 7 | This is a reminder to submit the Daily Symptom Monitoring Form!
