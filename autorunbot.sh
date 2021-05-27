@@ -2,7 +2,7 @@
 
 COUNTER=1
 
-RESTARTSECS=1
+RESTARTSECS=2
 
 CURDATE=$(date -I)
 #LOGFILE="logs/log-$CURDATE.txt"

@@ -5,7 +5,7 @@
 
 const Discord = require("discord.io");
 const logger = require("winston");
-const redis = require("redis");
+//const redis = require("redis");
 const fs = require("fs");
 
 // Might be better to use .env here
@@ -55,14 +55,14 @@ const bot = new Discord.Client({
 });
 
 // Initialize redis client
-const redisClient = redis.createClient();
-redisClient.on("error", console.error);
+//const redisClient = redis.createClient();
+//redisClient.on("error", console.error);
 
 // Initialize global variables
 const diningMenuManagerInstance = new DiningMenuManager();
 const duelManagerInstance = new DuelManager();
-const virusManagerInstance = new VirusManager(bot, redisClient);
 const scheduledMessageManagerInstance = new ScheduledMessageManager(bot, "487095520473382922", true);
+//const virusManagerInstance = new VirusManager(bot, redisClient);
 
 logger.info("Starting...");
 
@@ -105,9 +105,10 @@ function respondClassCmd (bot, args, channelID, detailType) {
     }
 
     let regexResult = args.join(" ").match(/([a-zA-Z]+)\s*(\d+[a-zA-Z]{0,9})\s*(.*)/);
+    console.log(regexResult);
     if(regexResult)
     {
-        let [deptName, classCode, extraArg] = regexResult;
+        let [_, deptName, classCode, extraArg] = regexResult;
         
         if(!(deptName && classCode))
         {
@@ -302,7 +303,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
             // !infect
             case "infect":
                 if (adminUserIDs.includes(userID)) {
-                    virusManagerInstance.startInfection(args[0]);
+                    //virusManagerInstance.startInfection(args[0]);
                 }
                 break;
         }
