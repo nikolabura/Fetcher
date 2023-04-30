@@ -5,7 +5,7 @@
   "main": "bot.js",
   "author": "nbura1@umbc.edu",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
+    "cheerio": "^1.0.0-rc.12",
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "discord.js": "^12.5.1",
     "got": "^11.8.0",
